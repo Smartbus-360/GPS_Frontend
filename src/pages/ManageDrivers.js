@@ -448,6 +448,7 @@ const handleViewStops = async (driverId) => {
 )}
 
       )}
+</>
     </div>
   );
 }
