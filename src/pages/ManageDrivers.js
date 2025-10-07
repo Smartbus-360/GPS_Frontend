@@ -191,6 +191,10 @@ export default function ManageDrivers() {
   const [drivers, setDrivers] = useState([]);
   const [form, setForm] = useState({ name: "", username: "", password: "" });
   const [editId, setEditId] = useState(null);
+// 🆕 For storing and showing stops
+const [selectedDriverId, setSelectedDriverId] = useState(null);
+const [stops, setStops] = useState([]);
+const [loadingStops, setLoadingStops] = useState(false);
 
   const role = localStorage.getItem("role");
   const token = localStorage.getItem("token");
@@ -258,6 +262,25 @@ export default function ManageDrivers() {
     setForm({ name: driver.name, username: driver.username, password: "" });
     setEditId(driver.id);
   };
+
+  // 🆕 Fetch stops of a specific driver
+const handleViewStops = async (driverId) => {
+  try {
+    setSelectedDriverId(driverId);
+    setLoadingStops(true);
+    const res = await axios.get(
+      `https://gps.smartbus360.com/api/drivers/by-driver/${driverId}`,
+      { headers }
+    );
+    setStops(res.data);
+  } catch (err) {
+    console.error("Error fetching stops:", err);
+    alert("Failed to fetch stops");
+  } finally {
+    setLoadingStops(false);
+  }
+};
+
 
   return (
     <div>
@@ -349,28 +372,99 @@ export default function ManageDrivers() {
                 <td className="py-2 px-4 border">
                   {new Date(driver.created_at).toLocaleDateString()}
                 </td>
-                <td className="py-2 px-4 border">
-                  {(role === "schooladmin" || role === "superadmin") && (
-                    <>
-                      <button
-                        onClick={() => handleEdit(driver)}
-                        className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(driver.id)}
-                        className="bg-red-600 text-white px-3 py-1 rounded"
-                      >
-                        Delete
-                      </button>
-                    </>
-                  )}
-                </td>
+                // <td className="py-2 px-4 border">
+                //   {(role === "schooladmin" || role === "superadmin") && (
+                //     <>
+                //       <button
+                //         onClick={() => handleEdit(driver)}
+                //         className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
+                //       >
+                //         Edit
+                //       </button>
+                //       <button
+                //         onClick={() => handleDelete(driver.id)}
+                //         className="bg-red-600 text-white px-3 py-1 rounded"
+                //       >
+                //         Delete
+                //       </button>
+                //     </>
+                //   )}
+                // </td>
+                  <td className="py-2 px-4 border space-x-2">
+  <button
+    onClick={() => handleViewStops(driver.id)}
+    className="bg-green-600 text-white px-3 py-1 rounded"
+  >
+    View Stops
+  </button>
+  {(role === "schooladmin" || role === "superadmin") && (
+    <>
+      <button
+        onClick={() => handleEdit(driver)}
+        className="bg-yellow-500 text-white px-3 py-1 rounded"
+      >
+        Edit
+      </button>
+      <button
+        onClick={() => handleDelete(driver.id)}
+        className="bg-red-600 text-white px-3 py-1 rounded"
+      >
+        Delete
+      </button>
+          
+    </>
+  )}
+</td>
+
               </tr>
             ))}
           </tbody>
         </table>
+{/* 🆕 Stops Section */}
+{selectedDriverId && (
+  <div className="mt-6 p-4 border rounded bg-gray-50 shadow">
+    <h2 className="text-xl font-semibold mb-3">
+      🛑 Stops assigned to Driver ID #{selectedDriverId}
+    </h2>
+
+    {loadingStops ? (
+      <p>Loading stops...</p>
+    ) : stops.length === 0 ? (
+      <p>No stops found for this driver.</p>
+    ) : (
+      <table className="min-w-full bg-white border rounded">
+        <thead>
+          <tr className="bg-gray-200 text-left">
+            <th className="py-2 px-4 border">#</th>
+            <th className="py-2 px-4 border">Round</th>
+            <th className="py-2 px-4 border">Placename</th>
+            <th className="py-2 px-4 border">Latitude</th>
+            <th className="py-2 px-4 border">Longitude</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stops.map((stop, i) => (
+            <tr key={stop.id}>
+              <td className="py-2 px-4 border">{i + 1}</td>
+              <td className="py-2 px-4 border">{stop.round_name}</td>
+              <td className="py-2 px-4 border">{stop.placename}</td>
+              <td className="py-2 px-4 border">{stop.latitude}</td>
+              <td className="py-2 px-4 border">{stop.longitude}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+<button
+  onClick={() => setSelectedDriverId(null)}
+  className="bg-gray-600 text-white px-3 py-1 rounded mt-2"
+>
+  Close
+</button>
+
+  </div>
+)}
+
       )}
     </div>
   );
