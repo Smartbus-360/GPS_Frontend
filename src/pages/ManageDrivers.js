@@ -373,24 +373,6 @@ const handleViewStops = async (driverId) => {
                 <td className="py-2 px-4 border">
                   {new Date(driver.created_at).toLocaleDateString()}
                 </td>
-                // <td className="py-2 px-4 border">
-                //   {(role === "schooladmin" || role === "superadmin") && (
-                //     <>
-                //       <button
-                //         onClick={() => handleEdit(driver)}
-                //         className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
-                //       >
-                //         Edit
-                //       </button>
-                //       <button
-                //         onClick={() => handleDelete(driver.id)}
-                //         className="bg-red-600 text-white px-3 py-1 rounded"
-                //       >
-                //         Delete
-                //       </button>
-                //     </>
-                //   )}
-                // </td>
                   <td className="py-2 px-4 border space-x-2">
   <button
     onClick={() => handleViewStops(driver.id)}
