@@ -347,6 +347,7 @@ const handleViewStops = async (driverId) => {
       {drivers.length === 0 ? (
         <p>No drivers found.</p>
       ) : (
+        <>
         <table className="min-w-full bg-white border rounded shadow">
           <thead>
             <tr className="bg-gray-200 text-left">
@@ -420,7 +421,6 @@ const handleViewStops = async (driverId) => {
             ))}
           </tbody>
         </table>
-{/* 🆕 Stops Section */}
 {selectedDriverId && (
   <div className="mt-6 p-4 border rounded bg-gray-50 shadow">
     <h2 className="text-xl font-semibold mb-3">
