@@ -369,7 +369,7 @@ export default function ManageStops() {
       }
 
       const res = await axios.get(url, {
-        headers,
+      headers: { Authorization: `Bearer ${token}` },
         responseType: "blob",
       });
 
