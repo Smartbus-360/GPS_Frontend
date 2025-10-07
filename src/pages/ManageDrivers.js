@@ -446,7 +446,7 @@ const handleViewStops = async (driverId) => {
 
   </div>
 )}
-
+  </>
       )}
 
     </div>
